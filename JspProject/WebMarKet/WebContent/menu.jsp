@@ -6,8 +6,10 @@
 		</div>
 		<div>
 			<ul class="navbar-nav mr-auto">
+				<li class="nav-item"><a class="nav-link" href="./auctionProducts.jsp">경매물품목록</a></li>
 				<li class="nav-item"><a class="nav-link" href="./products.jsp">상품목록</a></li>
-				<li class="nav-item"><a class="nav-link" href="./addProduct.jsp">상품등록</a></li>
+				<li class="nav-item"><a class="nav-link" href="./bid_list.jsp">입찰목록</a></li>
+				<li class="nav-item"><a class="nav-link" href="./addProduct.jsp">물품등록</a></li>
 				<li class="nav-item"><a class="nav-link" href="./editProduct.jsp?edit=update">상품수정</a></li>
 				<li class="nav-item"><a class="nav-link" href="./editProduct.jsp?edit=delete">상품삭제</a></li>
 			</ul>

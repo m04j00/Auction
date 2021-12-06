@@ -1,3 +1,6 @@
+<%@page import="java.util.Calendar"%>
+<%@page import="java.util.Date"%>
+<%@page import="java.text.SimpleDateFormat"%>
 <%@page import="java.util.Enumeration"%>
 <%@page import="com.oreilly.servlet.multipart.DefaultFileRenamePolicy"%>
 <%@page import="com.oreilly.servlet.MultipartRequest"%>
@@ -18,48 +21,70 @@
 	//원래는 request로 처리, 만약 파일 중복과 같은 값을 처리해야한다면 request뒤의 내용들로 처리
 	//파일 저장용도
 	
-	String productId = multi.getParameter("productId");
 	String name = multi.getParameter("name");
-	String unitPrice = multi.getParameter("unitPrice");
+	String unitPrice = multi.getParameter("startPrice");
 	String description = multi.getParameter("description");
-	String menufacturer = multi.getParameter("menufacturer");
-	String category = multi.getParameter("category");
-	String unitsInStock = multi.getParameter("unitsInStock");
-	String condition = multi.getParameter("condition");
-		
+	String unit = multi.getParameter("unit");
+	String sellPrice = multi.getParameter("sellPrice");
+	String seller = "admin";	
 	Integer price;
+	Integer sPrice;
 	if(unitPrice.isEmpty())
 		price = 0;
 	else
 		price = Integer.valueOf(unitPrice);
-	
-	long stock;
-	if(unitsInStock.isEmpty())
-		stock = 0;
+	if(sellPrice.isEmpty())
+		sPrice = -1;
 	else
-		stock = Long.valueOf(unitsInStock);
+		sPrice = Integer.valueOf(sellPrice);
+	Date now = new Date();
 	
+
+    Calendar cal = Calendar.getInstance();
+    //출력용으로 Calendar 클래스에서 Date 클래스를 가져옵니다.
+    cal.add(Calendar.DAY_OF_MONTH, 7);
+    Date date = cal.getTime();
+    
+    String time = (new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")).format( date );
+    
+	System.out.println(time);
 	Enumeration files = multi.getFileNames();	//Enumeration files에 파일을 담는다.
 	//파일을 list형태로 files에 담음
 	String fname = (String)files.nextElement(); //files에 있는 파일의 이름을 가져온다.
 	String fileName = multi.getFilesystemName(fname); //서버에 실제 저장된 파일이름(원 파일 명)을 가져옴 -> 이후 중복되면 파일명 바꿈
 	
 	PreparedStatement pstmt = null;
-	String sql = "insert into product values(?, ?, ?,?,?,?,?,?,?)";
-	pstmt = conn.prepareStatement(sql);
-	pstmt.setString(1, productId);
-	pstmt.setString(2, name);
-	pstmt.setInt(3, price);
-	pstmt.setString(4, description);
-	pstmt.setString(5, category);
-	pstmt.setString(6, menufacturer);
-	pstmt.setLong(7, stock);
-	pstmt.setString(8, condition);
-	pstmt.setString(9, fileName);
+	String sql;
+	if(sPrice == -1){
+		sql = "insert into product(p_name, p_start_price, p_bid_price, p_bid_cnt, p_description, p_bid_unit, p_state, p_file_name, p_seller, p_time, p_action_end) values(?, ?, ?, 0, ?, ?, false, ?, ?, ?, true)";
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setString(1, name);
+		pstmt.setInt(2, price);
+		pstmt.setInt(3, price);
+		pstmt.setString(4, description);
+		pstmt.setString(5, unit);
+		pstmt.setString(6, fileName);
+		pstmt.setString(7, seller);
+		pstmt.setString(8, time);
+	}
+	else{
+		sql = "insert into product(p_name, p_start_price, p_bid_price, p_bid_cnt, p_description, p_bid_unit, p_state, p_file_name, p_seller, p_time, p_action_end, p_sell_price ) values(?, ?, ?, 0, ?, ?, false, ?, ?, ?, true, ?)";
+		pstmt = conn.prepareStatement(sql);
+		pstmt.setString(1, name);
+		pstmt.setInt(2, price);
+		pstmt.setInt(3, price);
+		pstmt.setString(4, description);
+		pstmt.setString(5, unit);
+		pstmt.setString(6, fileName);
+		pstmt.setString(7, seller);
+		pstmt.setString(8, time);
+		pstmt.setInt(9, sPrice);
+	}
+
 	pstmt.executeUpdate();
-	
+
 	if(pstmt != null) pstmt.close();
 	if(conn != null) conn.close();
 
-	response.sendRedirect("products.jsp");
+	response.sendRedirect("auctionProducts.jsp");
 %>

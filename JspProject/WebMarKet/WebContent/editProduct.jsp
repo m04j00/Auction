@@ -5,6 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="./resources/css/bootstrap.min.css">
+<link rel="stylesheet" href="./resources/css/style.css">
 <title>상품 편집</title>
 <script type ="text/javascript">
 	function deleteConfirm(id){
@@ -31,16 +32,19 @@
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
 			
-			String sql = "SELECT * FROM product";
+			String sql = "SELECT * FROM product where p_action_end = ?";
 			pstmt = conn.prepareStatement(sql);
+			pstmt.setBoolean(1, true);
 			rs = pstmt.executeQuery();
 			while(rs.next()){
 		%>
-		<div class="col-md-4">
-			<img src="c:/upload/<%=rs.getString("p_fileName")%>" style="width:100%">
-			<h3><%=rs.getString("p_name") %></h3>
-			<p><%=rs.getString("p_description") %></p>
-			<p><%=rs.getString("p_unitPrice") %>원</p>
+			<div class="col-md-4 products-div">
+				<img src="C:/upload/<%=rs.getString("p_file_name")%>"
+					class="products-img">
+				<h3><%=rs.getString("p_name")%></h3>
+				<div class="price-text" style="margin-bottom:15px"><%=rs.getString("p_bid_price") %>원
+				</div>
+				<span>판매 <%=rs.getString("p_seller") %></span>
 			<p><%
 				if(edit.equals("update")){
 				%>

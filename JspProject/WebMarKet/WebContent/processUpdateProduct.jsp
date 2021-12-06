@@ -12,32 +12,17 @@
 	String realFolder = "C:\\upload";	//웹 애플리케이션상의 절대 경로 //파일명이 너무 길면 파일을 못 찾는다.
 	int maxSize = 5 * 1024 * 1024;		//한번에 올릴수 있는 최대 업로드될 최대 용량 5MB
 	String encType = "UTF-8";
-	
+	String id = request.getParameter("id");
 	MultipartRequest multi = new MultipartRequest(request, realFolder, maxSize, encType, new DefaultFileRenamePolicy());
 	//new DefaultFileRenamePolicy() 같은 이름의 파일이 있을 경우 어떻게 할것인지 -> 파일이름이 바뀜 p1, p2, p3...
 	//원래는 request로 처리, 만약 파일 중복과 같은 값을 처리해야한다면 request뒤의 내용들로 처리
 	//파일 저장용도
 	
-	String productId = multi.getParameter("productId");
 	String name = multi.getParameter("name");
-	String unitPrice = multi.getParameter("unitPrice");
 	String description = multi.getParameter("description");
-	String menufacturer = multi.getParameter("menufacturer");
-	String category = multi.getParameter("category");
-	String unitsInStock = multi.getParameter("unitsInStock");
-	String condition = multi.getParameter("condition");
+	String sellPrice = multi.getParameter("sellPrice");
 		
-	Integer price;
-	if(unitPrice.isEmpty())
-		price = 0;
-	else
-		price = Integer.valueOf(unitPrice);
 	
-	long stock;
-	if(unitsInStock.isEmpty())
-		stock = 0;
-	else
-		stock = Long.valueOf(unitsInStock);
 	
 	Enumeration files = multi.getFileNames();	//Enumeration files에 파일을 담는다.
 	//파일을 list형태로 files에 담음
@@ -49,34 +34,26 @@
 	
 	String sql = "SELECT * FROM product WHERE p_id = ?";
 	pstmt = conn.prepareStatement(sql);
-	pstmt.setString(1, productId);
+	pstmt.setString(1, id);
 	rs = pstmt.executeQuery();
 	
 	if(rs.next()){
 		if(fileName != null){
-			sql = "UPDATE product SET p_name = ?, p_unitPrice = ?, p_description = ?, p_manufacturer = ?, p_category = ?, p_unitsInStock = ?, p_condition = ?, p_fileName =? WHERE p_id = ?";
+			sql = "UPDATE product SET p_name = ?, p_description = ?, p_sell_price = ?, p_file_name =? WHERE p_id = ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, name);
-			pstmt.setInt(2, price);
-			pstmt.setString(3, description);
-			pstmt.setString(4, category);
-			pstmt.setString(5, menufacturer);
-			pstmt.setLong(6, stock);
-			pstmt.setString(7, condition);
-			pstmt.setString(8, fileName);
-			pstmt.setString(9, productId);
+			pstmt.setString(2, description);
+			pstmt.setString(3, sellPrice);
+			pstmt.setString(4, fileName);
+			pstmt.setString(5, id);
 			pstmt.executeUpdate();
 		}else{
-			sql = "UPDATE product SET p_name = ?, p_unitPrice = ?, p_description = ?, p_manufacturer = ?, p_category = ?, p_unitsInStock = ?, p_condition = ? WHERE p_id = ?";
+			sql = "UPDATE product SET p_name = ?, p_description = ?, p_sell_price = ?WHERE p_id = ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, name);
-			pstmt.setInt(2, price);
-			pstmt.setString(3, description);
-			pstmt.setString(4, category);
-			pstmt.setString(5, menufacturer);
-			pstmt.setLong(6, stock);
-			pstmt.setString(7, condition);
-			pstmt.setString(8, productId);
+			pstmt.setString(2, description);
+			pstmt.setString(3, sellPrice);
+			pstmt.setString(4, id);
 			pstmt.executeUpdate();
 		}
 		

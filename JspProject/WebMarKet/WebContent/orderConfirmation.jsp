@@ -1,11 +1,13 @@
+<%@page import="com.mysql.fabric.xmlrpc.base.Value"%>
+<%@page import="java.sql.*"%>
 <%@page import="dto.Product"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.net.URLDecoder"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+	<%@ include file="dbconn.jsp"%>
 <%
 request.setCharacterEncoding("UTF-8");
-
 String cartId = session.getId();
 String shipping_cartId = "";
 String shipping_name = "";
@@ -13,7 +15,6 @@ String shipping_shippingDate = "";
 String shipping_country = "";
 String shipping_zipCode = "";
 String shipping_addressName = "";
-
 Cookie[] cookies = request.getCookies();
 if (cookies != null) {
 	for (int i = 0; i < cookies.length; i++) {
@@ -31,7 +32,6 @@ if (cookies != null) {
 			shipping_zipCode = URLDecoder.decode((thisCookie.getValue()), "utf-8");
 		if (n.equals("Shipping_addressName"))
 			shipping_addressName = URLDecoder.decode((thisCookie.getValue()), "utf-8");
-
 	}
 }
 %>
@@ -94,7 +94,18 @@ if (cookies != null) {
 				for (int i = 0; i < cartList.size(); i++) {
 					Product product = cartList.get(i);
 					int total = product.getUnitPrice() * product.getQuantity();
+					
 					sum += total;
+					
+					PreparedStatement pstmt = null;
+					ResultSet rs = null;
+					String sql = "DELETE FROM product WHERE p_id = ?";
+					pstmt = conn.prepareStatement(sql);
+					pstmt.setString(1, product.getProductId());
+					System.out.println(pstmt);
+					pstmt.executeUpdate();
+					pstmt = null;
+					rs = null;
 				%>
 				<tr>
 					<td class="text-center"><em><%=product.getPname()%></em></td>

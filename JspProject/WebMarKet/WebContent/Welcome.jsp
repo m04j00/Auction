@@ -10,18 +10,18 @@
 <body>
 	<jsp:include page="menu.jsp"/>
 	<%!
-		String greeting = "Welcome to Web Shopping Mall";
-		String tagline = "Welcome to Web Market!";
+		String greeting = "물품 경매 사이트";
+		String tagline = "물품을 등록하고 경매를 통해 물품을 판매하세요. 물품이 낙찰되지 않아도 사이트 내에서 판매할 수 있습니다.";
 	%>
 	<div class="jumbotron"> <!-- 전광판 -->
-		<div class="container">
-			<h1 class="display-3"><%= greeting %></h1>
+		<div class="container" style="text-align:center;">
+			<h1 class="display-3" ><%= greeting %></h1>
 		</div>
 	</div>
 	<main role="main">
 		<div class = "container">
 			<div class="text-center">
-				<h3><%= tagline %></h3>
+				<h6><%= tagline %></h3>
 			</div>
 			<hr> <!-- 실선 -->
 			

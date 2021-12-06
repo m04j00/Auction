@@ -35,8 +35,8 @@ String cartId = session.getId();
 					<th>상품</th>
 					<th>가격</th>
 					<th>수량</th>
-					<th>소계</th>
 					<th>비고</th>
+					<th></th>
 				</tr>
 				<%
 				int sum = 0;
@@ -47,16 +47,19 @@ String cartId = session.getId();
 				for (int i = 0; i < cartList.size(); i++) {
 					//상품 리스트 하나씩 출력하기
 					Product product = cartList.get(i);
-					int total = product.getUnitPrice() * product.getQuantity();
-					sum += total;
+					System.out.println("getProductId " + product.getProductId());
+					System.out.println("getPname " + product.getPname());
+					//int total = product.getUnitPrice() * product.getQuantity();
+					sum += product.getUnitPrice();
 				%>
 				<tr>
 					<td><%=product.getProductId()%> - <%=product.getPname()%></td>
 					<td><%=product.getUnitPrice()%></td>
 					<td><%=product.getQuantity()%></td>
-					<td><%=total%></td>
+					
 					<td><a href="./removeCart.jsp?id=<%=product.getProductId()%>"
 						class="badge badge-danger">삭제</a></td>
+						<td></td>
 				</tr>
 				<%
 				}

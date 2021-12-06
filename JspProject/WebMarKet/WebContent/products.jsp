@@ -1,40 +1,50 @@
-<%@ page import="java.sql.*" %>
+<%@ page import="java.sql.*"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-    <%-- <jsp:useBean id="productDAO" class="dao.ProductRepository" scope="session"/> --%>
+	pageEncoding="UTF-8"%>
+<%-- <jsp:useBean id="productDAO" class="dao.ProductRepository" scope="session"/> --%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="./resources/css/bootstrap.min.css">
+<link rel="stylesheet" href="./resources/css/style.css">
+<script type="text/javascript" src="./resources/js/timer.js"></script>
 <title>상품 목록</title>
 </head>
 <body>
-	<jsp:include page="menu.jsp"/>
-	<div class="jumbotron"> <!-- 전광판 -->
+	<jsp:include page="menu.jsp" />
+	<div class="jumbotron">
+		<!-- 전광판 -->
 		<div class="container">
 			<h1 class="display-3">상품 목록</h1>
 		</div>
 	</div>
-	<div class = "container">
+	<div class="container">
 		<div class="row" align="center">
-		<%@ include file="dbconn.jsp" %>
+			<%@ include file="dbconn.jsp"%>
 			<%
 				PreparedStatement pstmt = null;
 				ResultSet rs = null;
-				String sql = "SELECT * FROM product";
+				String sql = "SELECT * FROM product where p_action_end = ?";
 				pstmt = conn.prepareStatement(sql);
+				pstmt.setBoolean(1, true);
 				rs = pstmt.executeQuery();
+				int i = 0;
+				
 				while(rs.next()){
+					if(rs.getString("p_sell_price") == null) continue;
 				%>
-				<div class="col-md-4">
-					<img src = "C:/upload/<%=rs.getString("p_fileName")%>" style = "width: 100%">
-					<h3><%=rs.getString("p_name")%></h3>
-					<p><%=rs.getString("p_description")%></p>
-					<p><%=rs.getString("p_unitPrice") %>원</p>
-					<p> <a href="./product.jsp?id=<%=rs.getString("p_id")%>" class="btn btn-secondary" role="button"> 상세 정보 &raquo;></a>
+			<div class="col-md-4 products-div"
+				onclick="location.href='./product.jsp?id=<%=rs.getString("p_id")%>'">
+				<img src="C:/upload/<%=rs.getString("p_file_name")%>"
+					class="products-img">
+				<h3><%=rs.getString("p_name")%></h3>
+				<div class="price-text" style="margin-bottom:15px"><%=rs.getString("p_bid_price") %>원
 				</div>
+				<span>판매 <%=rs.getString("p_seller") %></span>
+			</div>
 			<% 
+				i++;
 				}
 				if(rs != null) rs.close();
 				if(pstmt != null) pstmt.close();
@@ -42,6 +52,6 @@
 			%>
 		</div>
 	</div>
-	<jsp:include page = "footer.jsp" />
+	<jsp:include page="footer.jsp" />
 </body>
 </html>
